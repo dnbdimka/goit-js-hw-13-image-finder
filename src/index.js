@@ -30,28 +30,19 @@ function onFormSumbit(e) {
     api.resetPage();
 
     if (api.query === '') {
-        error({
-            text: "Please enter your search term",
-            delay: 3000,
-        });
-        refs.form.elements.btn.textContent = 'Search';
-        refs.form.elements.btn.removeAttribute('disabled')
+        ifError("Please enter your search term");
+        activateSearchBtn();
         return;
     };
 
     api.fetchImages().then(({ hits, total }) => {
         if (hits.length === 0 ) {
-            error({
-                text: "Please enter a valid search term",
-                delay: 3000,
-            });
-            refs.form.elements.btn.textContent = 'Search';
-            refs.form.elements.btn.removeAttribute('disabled')
+            ifError("Please enter a valid search term");
+            activateSearchBtn();
             return;
         };
         renderImages(hits);
-        refs.form.elements.btn.textContent = 'Search';
-        refs.form.elements.btn.removeAttribute('disabled');
+        activateSearchBtn();
         refs.loadMoreBtn.classList.remove('is-hidden');
         onLastPage(total);
     });
@@ -86,8 +77,6 @@ function clearGalleryList() {
 
 function onLastPage(all) {
     const allPage = Math.ceil(all / api.per_page);
-    // console.log(api.page);
-    // console.log(allPage);
     if (api.page >= allPage) {
         notice({
             text: "These are all pictures according to your request",
@@ -97,8 +86,18 @@ function onLastPage(all) {
     };
 }
 
+function activateSearchBtn() {
+    refs.form.elements.btn.textContent = 'Search';
+    refs.form.elements.btn.removeAttribute('disabled');
+}
 
-
+function ifError(msg) {
+    error({
+            text: msg,
+            delay: 3000,
+        });
+    
+}
 
 
 
